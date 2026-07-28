@@ -43,3 +43,27 @@ def login():
             'must_reset_password': user.must_reset_password
         }
     }), 200
+
+#update password route for user
+@auth_bp.route('/register', methods=['POST'])
+def set_password():
+    data = request.get_json()
+    email = data.get('email')
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+
+    # Check if email and password are provided
+    if not all([email,current_password,new_password]):
+        return jsonify({"error":"Email, current password and new password are required"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not user.check_password(current_password):
+        return jsonify({"error":"Invalid email or password"}), 401
+
+    user.set_password(new_password)
+    user.must_reset_password = False
+
+    db.session.commit()
+
+    return jsonify({"message": "Password updated successfully"}), 200

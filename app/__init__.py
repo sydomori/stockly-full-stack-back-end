@@ -11,4 +11,7 @@ def create_app():
     jwt.init_app(app)
     cors.init_app(app)
 
+    with app.app_context():
+        from app import models
+
     return app

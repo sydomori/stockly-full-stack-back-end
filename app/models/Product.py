@@ -12,7 +12,7 @@ class Product(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    #activity_logs = db.relationship('ActivityLog', backref='product', lazy=True)
+    activity_logs = db.relationship('ActivityLog', backref='product', lazy=True)
 
     def __repr__(self):
         return f'<Product {self.name} ({self.sku})>'

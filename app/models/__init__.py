@@ -4,3 +4,4 @@ from app.models.Category import Category
 from app.models.Supplier import Supplier
 from app.models.Product import Product
 from app.models.Product_suplier import ProductSupplier
+from app.models.Activity_log import ActivityLog

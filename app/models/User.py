@@ -14,7 +14,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True,nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    #activity_logs = db.relationship("ActivityLog", back_populates="user", lazy=True)
+    activity_logs = db.relationship("ActivityLog", backref="user", lazy=True)
 
     def set_password(self,password):
         self.password_hash = generate_password_hash(password)

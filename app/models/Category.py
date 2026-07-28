@@ -9,7 +9,7 @@ class Category(db.Model):
     description = db.Column(db.String(225))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    #products = db.relationship("Product", back_populates='category', lazy=True)
+    products = db.relationship("Product", backref='category', lazy=True)
 
     def __repr__(self):
         return f'<Category {self.name}>'

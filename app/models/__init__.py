@@ -2,3 +2,4 @@
 from app.models.User import User
 from app.models.Category import Category
 from app.models.Supplier import Supplier
+from app.models.Product import Product

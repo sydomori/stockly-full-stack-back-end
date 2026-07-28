@@ -9,4 +9,4 @@ from flask_cors import CORS
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
-cors = CORS
+cors = CORS()

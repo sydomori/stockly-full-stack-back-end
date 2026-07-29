@@ -12,7 +12,7 @@ with app.app_context():
     else:
         admin = User(
             name="Syd Admin",
-            email="admin.stockly.com",
+            email="admin@stockly.com",
             role="admin",
             must_reset_password=True,
             is_active=True

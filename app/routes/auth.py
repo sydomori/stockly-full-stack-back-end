@@ -45,7 +45,7 @@ def login():
     }), 200
 
 #update password route for user
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/set-password', methods=['POST'])
 def set_password():
     data = request.get_json()
     email = data.get('email')

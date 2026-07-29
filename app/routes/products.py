@@ -13,3 +13,13 @@ products_bp = Blueprint('products', __name__, url_prefix='/products')
 def get_products():
     products = Product.query.all()
     return jsonify(products_schema.dump(products)), 200
+
+@products_bp.route('/<int:product_id>', methods=['GET'])
+@jwt_required
+def get_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify ({'error':'Product not found'}),400
+    return jsonify(product_schema.dump(product)), 200
+
+

@@ -91,3 +91,27 @@ def update_product(product_id):
         )
 
     return jsonify(product_schema.dump(product)), 200
+
+
+@products_bp.route('/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+def delete_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({'error': 'Product not found'}), 404
+
+    product_name = product.name
+    product_sku = product.sku
+    user_id = get_jwt_identity()
+
+    db.session.delete(product)
+    db.session.commit()
+
+    log_activity(
+        user_id=user_id,
+        action='deleted',
+        details=f"Product '{product_name} (SKU: {product_sku})' deleted",
+        product_id=None
+    )
+
+    return jsonify({'message': 'Product deleted successfully'}), 200

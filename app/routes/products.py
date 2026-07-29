@@ -55,3 +55,39 @@ def create_product():
 
     return jsonify(product_schema.dump(product)), 201
 
+@products_bp.route('/<int:product_id>', methods=['PUT'])
+@jwt_required()
+def update_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({'error': 'Product not found'}), 404
+
+    data = request.get_json()
+    changes = []
+
+    if 'name' in data and data['name'] != product.name:
+        changes.append(f"Name: {product.name} -> {data['name']}")
+        product.name = data['name']
+
+    if 'stock_quantity' in data and data['stock_quantity'] != product.stock_quantity:
+        changes.append(f"Stock Quantity: {product.stock_quantity} -> {data['stock_quantity']}")
+        product.stock_quantity = data['stock_quantity']
+
+    if 'price' in data and data['price'] != product.price:
+        changes.append(f"Price: {product.price} -> {data['price']}")
+        product.price = data['price']
+
+    if 'category_id' in data and data['category_id'] != product.category_id:
+        changes.append(f"Category: {product.category_id} -> {data['category_id']}")
+        product.category_id = data['category_id']
+
+    db.session.commit()
+    if changes:
+        user_id = get_jwt_identity()
+        log_activity(
+            user_id=user_id,
+            action='updated',
+            details=f"Product '{product.name} (SKU: {product.sku})' {', '.join(changes)}"
+        )
+
+    return jsonify(product_schema.dump(product)), 200

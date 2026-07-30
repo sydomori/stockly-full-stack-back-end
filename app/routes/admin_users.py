@@ -16,6 +16,7 @@ def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
+#create user
 @admin_users_bp.route('', methods=['POST'])
 @admin_required
 def create_user():
@@ -33,6 +34,7 @@ def create_user():
     if role not in ['user', 'admin']:
         return ({'error': 'Invalid role'}), 400
 
+    #generate temp password for new user
     temp_password = secrets.token_urlsafe(8)
 
     new_user = User(
@@ -42,6 +44,7 @@ def create_user():
         must_reset_passwors=True,
         is_active=True
     )
+
     new_user.set_password(temp_password)
 
     db.session.add(new_user)
@@ -58,3 +61,39 @@ def create_user():
         'user': user_schema.dump(new_user),
         'temp_password': temp_password
     }), 201
+
+#update user ie change role(promote) or demote
+@admin_users_bp.route('/<int:user_id>', methods=['PUT'])
+@admin_required
+def update_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    data = request.get_json()
+    changes = []
+
+    #make sure role is valid
+    if 'role' in data and data['role'] != user.role:
+        if data['role'] not in ['user', 'admin']:
+            return ({'error': 'Invalid role'}), 400
+        changes.append(f"Role: {user.role} -> {data['role']}")
+        user.role = data['role']
+
+    #make sure is_active is valid
+    if 'is_active' in data and data['is_active'] != user.is_active:
+        status = 'activated' if data['is_active'] else 'deactivated'
+        changes.append(f"account {status}")
+        user.is_active = data['is_active']
+
+    db.session.commit()
+
+    if changes:
+        user_id = get_jwt_identity()
+        log_activity(
+            user_id=user_id,
+            action='updated',
+            details=f"User '{user.name}' updated: {', '.join(changes)}"
+        )
+
+    return jsonify(user_schema.dump(user)), 200

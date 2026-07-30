@@ -35,3 +35,12 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 users_schema = UserSchema(many=True)
 user_schema = UserSchema()
+
+class ActivityLogSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivityLog
+        load_instance = True
+        include_fk = True
+
+activity_logs_schema = ActivityLogSchema(many=True)
+activity_log_schema = ActivityLogSchema()

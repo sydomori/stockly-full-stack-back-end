@@ -31,6 +31,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
+        #prevent autoschema from returning password hash
         exclude = ('password_hash',)
 
 users_schema = UserSchema(many=True)

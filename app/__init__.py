@@ -10,7 +10,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    cors.init_app(app)
+    cors.init_app(app, resources={r"/*": {"origins": app.config.get('FRONTEND_ORIGIN', 'http://localhost:5173')}})
     ma.init_app(app)
     
 

@@ -20,6 +20,9 @@ class CategorySchema(ma.SQLAlchemyAutoSchema):
         model= Category
         load_instance = True
 
+categories_schema = CategorySchema(many=True)
+category_schema = CategorySchema()
+
 class SupplierSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Supplier

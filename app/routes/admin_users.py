@@ -16,4 +16,45 @@ def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
+@admin_users_bp.route('', methods=['POST'])
+@admin_required
+def create_user():
+    data = request.get_json()
+    required_fields = ['name', 'email']
 
+    if not all (field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields:{required_fields}'}), 400
+
+    existing = User.query.filter_by(email=data['email']).first()
+    if existing:
+        return jsonify({'error':'A user with this email already exists'}), 400
+
+    role = data.get('role', 'user')
+    if role not in ['user', 'admin']:
+        return ({'error': 'Invalid role'}), 400
+
+    temp_password = secrets.token_urlsafe(8)
+
+    new_user = User(
+        name=data['name'],
+        email=data['email'],
+        role=role,
+        must_reset_passwors=True,
+        is_active=True
+    )
+    new_user.set_password(temp_password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    admin_id = get_jwt_identity()
+    log_activity(
+        user_id = admin_id,
+        action='created',
+        details=f"User '{new_user.name}' created email: {new_user.email}, role: {new_user.role}"
+    )
+
+    return jsonify({
+        'user': user_schema.dump(new_user),
+        'temp_password': temp_password
+    }), 201

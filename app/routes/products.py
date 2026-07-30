@@ -25,7 +25,7 @@ def get_product(product_id):
     return jsonify(product_schema.dump(product)), 200
 
 #add product
-@products_bp('', methods=['POST'])
+@products_bp.route('', methods=['POST'])
 @jwt_required()
 def create_product():
     data = request.get_json()

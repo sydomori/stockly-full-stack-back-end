@@ -84,3 +84,29 @@ def update_supplier(supplier_id):
         )
 
     return jsonify(supplier_schema.dump(supplier)), 200
+
+@suppliers_bp.route('/<int:supplier_id>', methods=['DELETE'])
+@admin_required
+def delete_supplier(supplier_id):
+    supplier = Supplier.query.get(supplier_id)
+    if not supplier:
+        return jsonify({'error': 'Supplier not found'}), 404
+
+    if supplier.product_suppliers:
+        return jsonify({
+            'error': f'Cannot delete supplier linked to {len(supplier.product_suppliers)} product(s). Remove the links first.'
+        }), 400
+
+    supplier_name = supplier.name
+    user_id = get_jwt_identity()
+
+    db.session.delete(supplier)
+    db.session.commit()
+
+    log_activity(
+        user_id=user_id,
+        action='deleted',
+        details=f"Supplier '{supplier.name}' deleted"
+    )
+
+    return jsonify({'message': 'Supplier deleted successfully'}), 200

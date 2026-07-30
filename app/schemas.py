@@ -17,12 +17,13 @@ product_schema = ProductSchema()
 
 class CategorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model: Category
+        model= Category
         load_instance = True
 
 class SupplierSchema(ma.SQLAlchemyAutoSchema):
-    model = Supplier
-    _load_instance = True
+    class Meta:
+        model = Supplier
+        load_instance = True
 
 suppliers_schema = SupplierSchema(many=True)
 supplier_schema = SupplierSchema()

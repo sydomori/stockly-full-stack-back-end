@@ -7,7 +7,7 @@ activity_log_bp = Blueprint('activity_log', __name__, url_prefix='/admin/activit
 
 #get all activity logs
 @activity_log_bp.route('/', methods=['GET'])
-@admin_required()
+@admin_required
 def get_activity_logs():
     #sorts actibity logs from newest to oldest
     logs = ActivityLog.query.order_by(ActivityLog.timestamp.desc()).all()

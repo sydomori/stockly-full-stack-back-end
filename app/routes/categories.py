@@ -26,7 +26,7 @@ def get_category(category_id):
 
 #update category
 @categories_bp.route('/<int:category_id>', methods=['POST'])
-@admin_required()
+@admin_required
 def create_category():
     data = request.get_json()
 

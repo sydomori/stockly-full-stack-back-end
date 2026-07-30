@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from app.models.User import User
 from app.utils import log_activity
@@ -88,10 +88,12 @@ def update_user(user_id):
 
     db.session.commit()
 
+    admin_id = get_jwt_identity()
+
     if changes:
         user_id = get_jwt_identity()
         log_activity(
-            user_id=user_id,
+            user_id=admin_id,
             action='updated',
             details=f"User '{user.name}' updated: {', '.join(changes)}"
         )

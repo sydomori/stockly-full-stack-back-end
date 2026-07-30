@@ -3,7 +3,7 @@ from app.models.Activity_log import ActivityLog
 from app.routes.test import admin_required
 from app.schemas import activity_log_schema, activity_logs_schema
 
-activity_log_bp = Blueprint('activity_log', __name__, url_prefix='/activity_log')
+activity_log_bp = Blueprint('activity_log', __name__, url_prefix='/admin/activity_log')
 
 #get all activity logs
 @activity_log_bp.route('/', methods=['GET'])

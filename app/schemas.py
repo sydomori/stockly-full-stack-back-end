@@ -2,6 +2,8 @@ from app.extensions import ma
 from app.models.Product import Product
 from app.models.Category import Category
 from app.models.Supplier import Supplier
+from app.models.User import User
+from app.models.Activity_log import ActivityLog
 
 
 class ProductSchema(ma.SQLAlchemyAutoSchema):
@@ -24,4 +26,12 @@ class SupplierSchema(ma.SQLAlchemyAutoSchema):
 
 suppliers_schema = SupplierSchema(many=True)
 supplier_schema = SupplierSchema()
-    
+
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        load_instance = True
+        exclude = ('password_hash',)
+
+users_schema = UserSchema(many=True)
+user_schema = UserSchema()

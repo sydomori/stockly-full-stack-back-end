@@ -23,3 +23,30 @@ def get_supplier(supplier_id):
     if not supplier:
         return jsonify ({'error':'Supplier not found'}),400
     return jsonify(supplier_schema.dump(supplier)), 200
+
+#create supplier (admin)
+@suppliers_bp.route('', methods=['POST'])
+@admin_required
+def create_supplier():
+    data = request.get_jsonn()
+
+    if 'name' not in data:
+        return jsonify({'error': 'Name is required'}), 400
+
+    supplier = Supplier(
+        name = data['name'],
+        contact_email = data.get('contact_email'),
+        phone = data.get('phone')
+    )
+
+    db.session.add(supplier)
+    db.session.commit()
+
+    user_id = get_jwt_identity()
+    log_activity(
+        user_id=user_id, 
+        action='created', 
+        details=f"Supplier '{supplier.name}' created"
+    )
+
+    return jsonify(supplier_schema.dump(supplier)), 201

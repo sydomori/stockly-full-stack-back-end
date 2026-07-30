@@ -50,3 +50,37 @@ def create_supplier():
     )
 
     return jsonify(supplier_schema.dump(supplier)), 201
+
+@suppliers_bp.route('/<int:supplier_id>', methods=['PUT'])
+@admin_required
+def update_supplier(supplier_id):
+    supplier = Supplier.query.get(supplier_id)
+    if not supplier:
+        return jsonify({'error': 'Supplier not found'}), 404
+
+    data = request.get_json()
+    changes = []
+
+    if 'name' in data and 'data[name]' != supplier.name:
+        changes.append(f"Name: {supplier.name} -> {data['name']}")
+        supplier.name = data['name']
+
+    if 'contact_email' in data and data['contact_email'] != supplier.contact_email:
+        changes.append(f"Contact Email: {supplier.contact_email} -> {data['contact_email']}")
+        supplier.contact_email = data['contact_email']
+
+    if 'phone' in data and data['phone'] != supplier.phone:
+        changes.append(f"Phone: {supplier.phone} -> {data['phone']}")
+        supplier.phone = data['phone']
+
+    db.session.commit()
+
+    if changes:
+        user_id = get_jwt_identity()
+        log_activity(
+            user_id=user_id,
+            action='updated',
+            details=f"Supplier '{supplier.name}' updated: {', '.join(changes)}"
+        )
+
+    return jsonify(supplier_schema.dump(supplier)), 200

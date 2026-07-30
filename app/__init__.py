@@ -38,4 +38,7 @@ def create_app():
     from app.routes.admin_users import admin_users_bp
     app.register_blueprint(admin_users_bp)
 
+    from app.routes.my_activity import my_activity_bp
+    app.register_blueprint(my_activity_bp)
+
     return app

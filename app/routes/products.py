@@ -29,26 +29,31 @@ def get_product(product_id):
 @jwt_required()
 def create_product():
     data = request.get_json()
-    required_fields = ['name', 'sku','stock_quantity','price,''category_id']
+    required_fields = ['name', 'sku','stock_quantity','price','category_id']
 
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
 
     existing = Product.query.filter_by(sku=data['sku']).first()
     if existing:
-        return jsonify ({'error': 'A product with this sku already exists'})
+        return jsonify ({'error': 'A product with this sku already exists'}), 409
 
     product = Product(
         name = data['name'],
         sku=data['sku'],
         stock_quantity=data['stock_quantity'],
         price=data['price'],
-        category_id=data['category_id']
+        category_id=data['category_id'],
+        image_url = data['image_url']
     )
+
+    db.session.add(product)
+    db.session.commit()
 
     user_id = get_jwt_identity()
     log_activity(
         user_id=user_id,
+        product_id=product.id,
         action='created',
         details=f"Product '{product.name} (SKU: {product.sku})"
     )
@@ -86,6 +91,7 @@ def update_product(product_id):
         user_id = get_jwt_identity()
         log_activity(
             user_id=user_id,
+            product_id=product.id,
             action='updated',
             details=f"Product '{product.name} (SKU: {product.sku})' {', '.join(changes)}"
         )
@@ -102,6 +108,7 @@ def delete_product(product_id):
 
     product_name = product.name
     product_sku = product.sku
+    product_id_for_log = product.id
     user_id = get_jwt_identity()
 
     db.session.delete(product)
@@ -109,9 +116,9 @@ def delete_product(product_id):
 
     log_activity(
         user_id=user_id,
+        product_id=product_id_for_log,
         action='deleted',
-        details=f"Product '{product_name} (SKU: {product_sku})' deleted",
-        product_id=None
+        details=f"Product '{product_name}' (SKU: {product_sku}) deleted"
     )
 
     return jsonify({'message': 'Product deleted successfully'}), 200

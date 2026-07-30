@@ -9,3 +9,11 @@ import secrets
 
 admin_users_bp = Blueprint('admin_users', __name__, url_prefix='/admin/users')
 
+#get all users
+@admin_users_bp.route('', methods=['GET'])
+@admin_required
+def get_users():
+    users = User.query.all()
+    return jsonify(users_schema.dump(users)), 200
+
+

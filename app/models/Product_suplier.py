@@ -7,7 +7,7 @@ class ProductSupplier(db.Model):
     supplier_id = db.Column(db.Integer, db.ForeignKey('suppliers.id'), primary_key=True)
     cost_price = db.Column(db.Float, nullable=True)
 
-    product = db.relationship('Product', backref='product_suppliers')
+    product = db.relationship('Product', back_populates='product_suppliers')
     supplier = db.relationship('Supplier', backref='product_suppliers')
 
     def __repr__(self):

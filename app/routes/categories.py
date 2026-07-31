@@ -58,7 +58,7 @@ def create_category():
     #return category
     return jsonify(category_schema.dump(category)), 201
 
-@categories_bp.route('<int:categoty_id>', methods=['PUT'])
+@categories_bp.route('/<int:category_id>', methods=['PUT'])
 @admin_required
 def update_category(category_id):
     category = Category.query.get(category_id)

@@ -15,5 +15,7 @@ class Product(db.Model):
 
     activity_logs = db.relationship('ActivityLog', backref='product', lazy=True)
 
+    product_suppliers = db.relationship('ProductSupplier', backref='product', cascade='all, delete-orphan', lazy=True)
+
     def __repr__(self):
         return f'<Product {self.name} ({self.sku})>'

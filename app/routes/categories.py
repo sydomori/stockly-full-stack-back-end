@@ -25,7 +25,7 @@ def get_category(category_id):
     return jsonify(category_schema.dump(category)), 200
 
 #update category
-@categories_bp.route('/<int:category_id>', methods=['POST'])
+@categories_bp.route('', methods=['POST'])
 @admin_required
 def create_category():
     data = request.get_json()

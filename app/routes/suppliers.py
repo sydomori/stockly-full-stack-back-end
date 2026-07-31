@@ -28,7 +28,7 @@ def get_supplier(supplier_id):
 @suppliers_bp.route('', methods=['POST'])
 @admin_required
 def create_supplier():
-    data = request.get_jsonn()
+    data = request.get_json()
 
     if 'name' not in data:
         return jsonify({'error': 'Name is required'}), 400

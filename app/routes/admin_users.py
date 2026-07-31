@@ -41,7 +41,7 @@ def create_user():
         name=data['name'],
         email=data['email'],
         role=role,
-        must_reset_passwors=True,
+        must_reset_password=True,
         is_active=True
     )
 

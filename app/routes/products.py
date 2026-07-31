@@ -17,7 +17,7 @@ def get_products():
 
 #get single product
 @products_bp.route('/<int:product_id>', methods=['GET'])
-@jwt_required
+@jwt_required()
 def get_product(product_id):
     product = Product.query.get(product_id)
     if not product:
